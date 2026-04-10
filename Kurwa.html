@@ -86,6 +86,19 @@
     button:active {
       transform: translateY(1px);
     }
+
+    .cell.winning{
+      background: rgba(243, 5, 152, 0.3) !important;
+      border: 2px solid #6e00c9;
+      box-shadow: 0 0 25px #2ecc71;
+      transform: scale(1.08);
+      animation: winPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes winPulse {
+      0%, 100% { transform: scale(1.08); }
+      50% { transform: scale(1.12); }
+    }
   </style>
 </head>
 <body>
@@ -93,7 +106,7 @@
 <h1>Крестики-нолики</h1>
 
 <div class="board" id="board"></div>
-<div class="status" id="status">Ход: X</div>function resetGame()
+<div class="status" id="status">Ход: X</div>
 <button onclick="resetGame()">Перезапустить</button>
 
 <script>
@@ -133,7 +146,7 @@
     }
 
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    statusText.textContent = `Ход: ${currentPlayer}`;
+    statusText.textContent = `Ход: ${currentPlayer}`; 
   }
 
   function updateBoard() {
@@ -150,9 +163,21 @@
       [0,4,8], [2,4,6]
     ];
 
-    return winPatterns.some(pattern => {
-      const [a, b, c] = pattern;O
-      return cells[a] && cells[a] === cells[b] && cells[a] === cells[c];
+    for (const pattern of winPatterns) {
+      const [a, b, c] = pattern;
+      if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
+        winingLine([a, b, c]);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function winingLine(indices){ 
+    const allCells = document.querySelectorAll('.cell');
+
+    indices.forEach(index =>{
+      allCells[index].classList.add('winning');
     });
   }
 
@@ -160,7 +185,12 @@
     cells = Array(9).fill(null);
     currentPlayer = 'X';
     gameActive = true;
-    statusText.textContent = 'Ход: X';O
+    statusText.textContent = 'Ход: X';
+
+    document.querySelectorAll('.cell').forEach(cell => {
+      cell.classList.remove('winning');
+    });
+
     createBoard();
   }
 
